@@ -30,7 +30,8 @@ interface Product {
 
 const PRODUCTS: Product[] = [
   { id: 'aperitivo', name: 'Aperitivo', price: 5, icon: <GlassWater className="w-4 h-4" /> },
-  { id: 'cibo', name: 'Hot Dog o Piadina', price: 5, icon: <UtensilsCrossed className="w-4 h-4" /> },
+  { id: 'hot_dog', name: 'Hot Dog', price: 5, icon: <UtensilsCrossed className="w-4 h-4" /> },
+  { id: 'piadina', name: 'Piadina (anche vegana)', price: 5, icon: <UtensilsCrossed className="w-4 h-4" /> },
   { id: 'patatine', name: 'Patatine', price: 3, icon: <UtensilsCrossed className="w-4 h-4" /> },
   { id: 'bibita', name: 'Bibita', price: 2.5, icon: <GlassWater className="w-4 h-4" /> },
   { id: 'acqua', name: 'Acqua', price: 1, icon: <GlassWater className="w-4 h-4" /> },
@@ -60,7 +61,8 @@ export default function App() {
   const [people, setPeople] = useState<number | string>(1);
   const [quantities, setQuantities] = useState<Record<string, number>>({
     aperitivo: 0,
-    cibo: 0,
+    hot_dog: 0,
+    piadina: 0,
     patatine: 0,
     bibita: 0,
     acqua: 0
