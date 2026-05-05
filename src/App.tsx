@@ -37,7 +37,7 @@ const PRODUCTS: Product[] = [
 ];
 
 export default function App() {
-  const [people, setPeople] = useState(1);
+  const [people, setPeople] = useState<number | string>(1);
   const [quantities, setQuantities] = useState<Record<string, number>>({
     aperitivo: 0,
     cibo: 0,
@@ -112,7 +112,7 @@ export default function App() {
                 <div className="bg-white/5 border border-white/10 p-4 rounded-xl text-center space-y-1 hover:bg-white/10 transition-colors">
                   <Calendar className="w-5 h-5 text-brand-primary mx-auto mb-1" />
                   <p className="text-[10px] text-brand-text-muted uppercase font-mono tracking-tighter">Quando</p>
-                  <p className="font-bold text-sm leading-tight">30 Magg</p>
+                  <p className="font-bold text-sm leading-tight">30 Maggio</p>
                 </div>
                 <div className="bg-white/5 border border-white/10 p-4 rounded-xl text-center space-y-1 hover:bg-white/10 transition-colors">
                   <MapPin className="w-5 h-5 text-brand-primary mx-auto mb-1" />
@@ -150,7 +150,7 @@ export default function App() {
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
-                      onClick={() => setPeople(Math.max(1, people - 1))}
+                      onClick={() => setPeople(Math.max(1, (Number(people) || 1) - 1))}
                       className="p-3 bg-brand-bg border border-brand-outline rounded-lg text-brand-primary hover:bg-white/5 transition-colors"
                     >
                       <Minus className="w-5 h-5" />
@@ -158,14 +158,15 @@ export default function App() {
                     <input
                       id="persone"
                       type="number"
+                      inputMode="numeric"
                       min="1"
                       value={people}
-                      onChange={(e) => setPeople(parseInt(e.target.value) || 1)}
+                      onChange={(e) => setPeople(e.target.value === "" ? "" : parseInt(e.target.value))}
                       className="flex-1 min-w-0 bg-brand-bg border border-brand-outline rounded-lg px-4 py-3 text-brand-text text-center focus:outline-none input-glow-focus transition-all"
                     />
                     <button
                       type="button"
-                      onClick={() => setPeople(people + 1)}
+                      onClick={() => setPeople((Number(people) || 0) + 1)}
                       className="p-3 bg-brand-bg border border-brand-outline rounded-lg text-brand-primary hover:bg-white/5 transition-colors"
                     >
                       <Plus className="w-5 h-5" />
@@ -267,6 +268,7 @@ export default function App() {
                       <option value="18:00">18:00</option>
                       <option value="19:00">19:00</option>
                       <option value="20:00">20:00</option>
+                      <option value="?????">Non lo so ancora</option>
                     </select>
                     <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-text-muted pointer-events-none" />
                   </div>
@@ -331,20 +333,6 @@ export default function App() {
             </section>
           </div>
         </motion.div>
-
-        {/* Branding Footer */}
-        <footer className="mt-12 text-center pb-8 border-t border-brand-outline pt-8">
-          <p className="font-display font-black text-brand-text/20 text-4xl tracking-tighter mb-4 opacity-50">
-            HALLEY HOUR
-          </p>
-          <div className="flex justify-center gap-4 text-brand-text-muted text-xs font-mono opacity-50">
-            <span>© 2026</span>
-            <span>•</span>
-            <span>SARMEOLA</span>
-            <span>•</span>
-            <span>CELESTIAL TECH</span>
-          </div>
-        </footer>
       </main>
 
       {/* Visual background details */}
