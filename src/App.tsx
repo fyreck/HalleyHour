@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   Calendar,
@@ -37,6 +37,26 @@ const PRODUCTS: Product[] = [
 ];
 
 export default function App() {
+  const targetDate = useMemo(() => new Date('2026-05-30T17:00:00').getTime(), []);
+  const [timeLeft, setTimeLeft] = useState(targetDate - Date.now());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(targetDate - Date.now());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [targetDate]);
+
+  const countdown = useMemo(() => {
+    if (timeLeft <= 0) return null;
+    return {
+      d: Math.floor(timeLeft / (1000 * 60 * 60 * 24)),
+      h: Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+      m: Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60)),
+      s: Math.floor((timeLeft % (1000 * 60)) / 1000),
+    };
+  }, [timeLeft]);
+
   const [people, setPeople] = useState<number | string>(1);
   const [quantities, setQuantities] = useState<Record<string, number>>({
     aperitivo: 0,
@@ -75,15 +95,8 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-brand-bg text-brand-text selection:bg-brand-primary selection:text-black pb-12">
-      {/* Header */}
-      <header className="fixed top-0 left-0 w-full z-50 bg-brand-bg/80 backdrop-blur-md border-b border-brand-outline px-6 py-4 flex justify-center items-center h-16">
-        <h1 className="font-display font-extrabold text-2xl tracking-[0.2em] text-brand-primary uppercase">
-          HALLEY HOUR
-        </h1>
-      </header>
-
       {/* Main Content */}
-      <main className="pt-24 px-4 max-w-lg mx-auto">
+      <main className="pt-6 px-4 max-w-lg mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -99,30 +112,58 @@ export default function App() {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-brand-surface via-transparent to-transparent" />
             <div className="absolute bottom-6 left-6 right-6">
-              <h2 className="font-display font-extrabold text-3xl text-brand-primary-fixed mb-0 drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
+              <h2 className="font-display font-extrabold text-5xl text-brand-primary-fixed mb-4 drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
                 HALLEY HOUR
               </h2>
+              {countdown && (
+                <div className="font-display font-black text-2xl tracking-tighter text-brand-primary-fixed drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
+                  -{countdown.d}g : {countdown.h}h : {countdown.m}m : {countdown.s}s
+                </div>
+              )}
             </div>
           </div>
 
           <div className="p-6 space-y-10">
             {/* Event Info Grid */}
             <section className="space-y-6">
-              <div className="grid grid-cols-3 gap-3">
-                <div className="bg-white/5 border border-white/10 p-4 rounded-xl text-center space-y-1 hover:bg-white/10 transition-colors">
-                  <Calendar className="w-5 h-5 text-brand-primary mx-auto mb-1" />
-                  <p className="text-[10px] text-brand-text-muted uppercase font-mono tracking-tighter">Quando</p>
-                  <p className="font-bold text-sm leading-tight">30 Maggio</p>
+              <div className="space-y-6">
+                {/* Quando? */}
+                <div className="flex items-center gap-4 group">
+                  <div className="w-12 h-12 flex items-center justify-center bg-brand-primary/10 border border-brand-primary/20 rounded-2xl group-hover:bg-brand-primary/20 transition-all duration-300">
+                    <Calendar className="w-6 h-6 text-brand-primary" />
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-brand-text-muted uppercase font-mono tracking-[0.2em] mb-0.5">Quando?</p>
+                    <p className="font-bold text-xl leading-none">30 Maggio</p>
+                  </div>
                 </div>
-                <div className="bg-white/5 border border-white/10 p-4 rounded-xl text-center space-y-1 hover:bg-white/10 transition-colors">
-                  <MapPin className="w-5 h-5 text-brand-primary mx-auto mb-1" />
-                  <p className="text-[10px] text-brand-text-muted uppercase font-mono tracking-tighter">Dove</p>
-                  <p className="font-bold text-sm leading-tight truncate">Sarmeola</p>
-                </div>
-                <div className="bg-white/5 border border-white/10 p-4 rounded-xl text-center space-y-1 hover:bg-white/10 transition-colors">
-                  <Clock className="w-5 h-5 text-brand-primary mx-auto mb-1" />
-                  <p className="text-[10px] text-brand-text-muted uppercase font-mono tracking-tighter">Orario</p>
-                  <p className="font-bold text-sm leading-tight">Ore 17.00</p>
+
+                {/* Dove? */}
+                <a
+                  href="https://maps.app.goo.gl/WoP1R36acTQrjXs47"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-4 group"
+                >
+                  <div className="w-12 h-12 flex items-center justify-center bg-brand-primary/10 border border-brand-primary/20 rounded-2xl group-hover:bg-brand-primary/30 group-hover:scale-110 transition-all duration-300">
+                    <MapPin className="w-6 h-6 text-brand-primary" />
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-brand-text-muted uppercase font-mono tracking-[0.2em] mb-0.5">Dove?</p>
+                    <p className="font-bold text-xl leading-none group-hover:text-brand-primary transition-colors">Parrocchia di San Fidenzo</p>
+                    <p className="text-[10px] text-brand-text-muted font-mono mt-1 uppercase">Sarmeola (PD)</p>
+                  </div>
+                </a>
+
+                {/* A che ora? */}
+                <div className="flex items-center gap-4 group">
+                  <div className="w-12 h-12 flex items-center justify-center bg-brand-primary/10 border border-brand-primary/20 rounded-2xl group-hover:bg-brand-primary/20 transition-all duration-300">
+                    <Clock className="w-6 h-6 text-brand-primary" />
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-brand-text-muted uppercase font-mono tracking-[0.2em] mb-0.5">A che ora?</p>
+                    <p className="font-bold text-xl leading-none">Dalle 17:00 in poi</p>
+                  </div>
                 </div>
               </div>
 
@@ -137,14 +178,14 @@ export default function App() {
 
             {/* Booking Form */}
             <section className="space-y-8">
-              <h3 className="font-bold text-2xl border-l-4 border-brand-primary pl-4 uppercase tracking-tighter">
+              <h3 className="font-bold text-3xl border-l-4 border-brand-primary pl-4 uppercase tracking-tighter">
                 Prenota il tuo posto
               </h3>
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Number of People */}
                 <div className="space-y-2">
-                  <label className="text-xs font-mono text-brand-text-muted uppercase tracking-widest block" htmlFor="persone">
+                  <label className="text-lg font-bold text-brand-text uppercase tracking-tight block" htmlFor="persone">
                     Numero di persone
                   </label>
                   <div className="flex items-center gap-2">
@@ -162,7 +203,7 @@ export default function App() {
                       min="1"
                       value={people}
                       onChange={(e) => setPeople(e.target.value === "" ? "" : parseInt(e.target.value))}
-                      className="flex-1 min-w-0 bg-brand-bg border border-brand-outline rounded-lg px-4 py-3 text-brand-text text-center focus:outline-none input-glow-focus transition-all"
+                      className="flex-1 min-w-0 bg-brand-bg border border-brand-outline rounded-lg px-4 py-3 text-brand-text text-center text-2xl font-bold focus:outline-none input-glow-focus transition-all"
                     />
                     <button
                       type="button"
@@ -176,8 +217,11 @@ export default function App() {
 
                 {/* Product Selection */}
                 <div className="space-y-3">
-                  <p className="text-xs font-mono text-brand-text-muted uppercase tracking-widest block">
+                  <p className="text-lg font-bold text-brand-text uppercase tracking-tight block">
                     Selezione Prodotti
+                  </p>
+                  <p className="text-[11px] text-brand-text-muted leading-relaxed">
+                    Si specifica che questa non è una prenotazione esclusiva e non vincola all&apos;acquisto; la prenotazione serve per agevolare l&apos;organizzazione dell&apos;evento.
                   </p>
                   <div className="border border-brand-outline rounded-xl divide-y divide-brand-outline bg-brand-bg/50">
                     {PRODUCTS.map((prod) => (
@@ -223,7 +267,7 @@ export default function App() {
 
                 {/* Reservation Name */}
                 <div className="space-y-2">
-                  <label className="text-xs font-mono text-brand-text-muted uppercase tracking-widest block" htmlFor="name">
+                  <label className="text-lg font-bold text-brand-text uppercase tracking-tight block" htmlFor="name">
                     Nome di prenotazione
                   </label>
                   <input
@@ -238,7 +282,7 @@ export default function App() {
 
                 {/* Email */}
                 <div className="space-y-2">
-                  <label className="text-xs font-mono text-brand-text-muted uppercase tracking-widest block" htmlFor="email">
+                  <label className="text-lg font-bold text-brand-text uppercase tracking-tight block" htmlFor="email">
                     Email
                   </label>
                   <input
@@ -253,7 +297,7 @@ export default function App() {
 
                 {/* Arrival Time */}
                 <div className="space-y-2">
-                  <label className="text-xs font-mono text-brand-text-muted uppercase tracking-widest block" htmlFor="time">
+                  <label className="text-lg font-bold text-brand-text uppercase tracking-tight block" htmlFor="time">
                     Orario di arrivo
                   </label>
                   <div className="relative">
@@ -277,8 +321,8 @@ export default function App() {
                 {/* Freestyle Checkbox */}
                 <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10 group cursor-pointer hover:bg-white/10 transition-colors"
                   onClick={() => setFormData(p => ({ ...p, freestyle: !p.freestyle }))}>
-                  <p className="text-sm font-medium group-hover:text-brand-primary transition-colors">
-                    Parteciperai alla battaglia di freestyle?
+                  <p className="text-base font-bold text-brand-text uppercase tracking-tight group-hover:text-brand-primary transition-colors">
+                    Battaglia di freestyle?
                   </p>
                   <div className={`w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all ${formData.freestyle ? 'bg-brand-primary border-brand-primary' : 'border-brand-outline bg-brand-bg'}`}>
                     {formData.freestyle && <CheckCircle className="w-4 h-4 text-black" />}
@@ -287,7 +331,7 @@ export default function App() {
 
                 {/* Notes */}
                 <div className="space-y-2">
-                  <label className="text-xs font-mono text-brand-text-muted uppercase tracking-widest block" htmlFor="notes">
+                  <label className="text-lg font-bold text-brand-text uppercase tracking-tight block" htmlFor="notes">
                     Eventuali Note
                   </label>
                   <textarea
@@ -305,9 +349,6 @@ export default function App() {
                   <div className="text-center space-y-2 px-2">
                     <p className="text-xs font-mono text-rose-400 uppercase tracking-[0.2em]">
                       Prenotazioni aperte fino al 27 maggio
-                    </p>
-                    <p className="text-[11px] text-brand-text-muted leading-relaxed">
-                      Si specifica che questa non è una prenotazione esclusiva e non vincola all&apos;acquisto; la prenotazione serve per agevolare l&apos;organizzazione dell&apos;evento.
                     </p>
                   </div>
 
