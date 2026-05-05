@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   Calendar,
@@ -324,7 +324,7 @@ export default function App() {
                 <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10 group cursor-pointer hover:bg-white/10 transition-colors"
                   onClick={() => setFormData(p => ({ ...p, freestyle: !p.freestyle }))}>
                   <p className="text-base font-bold text-brand-text uppercase tracking-tight group-hover:text-brand-primary transition-colors">
-                    Battaglia di freestyle?
+                    Parteciperai alla battaglia di freestyle?
                   </p>
                   <div className={`w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all ${formData.freestyle ? 'bg-brand-primary border-brand-primary' : 'border-brand-outline bg-brand-bg'}`}>
                     {formData.freestyle && <CheckCircle className="w-4 h-4 text-black" />}
