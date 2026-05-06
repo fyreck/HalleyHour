@@ -1,4 +1,5 @@
-import { drizzle } from "drizzle-orm/netlify-http";
-import database from "@netlify/database";
+import { drizzle } from "drizzle-orm/neon-http";
+import { getDatabase, ServerlessDatabaseConnection } from "@netlify/database";
 
-export const db = drizzle(database);
+const conn = getDatabase() as ServerlessDatabaseConnection;
+export const db = drizzle(conn.httpClient);
