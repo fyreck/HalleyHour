@@ -90,15 +90,22 @@ export default function App() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     try {
-      const res = await fetch('/.netlify/functions/submit-reservation', {
+      const response = await fetch('/.netlify/functions/submit-reservation', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, people, quantities })
+        body: JSON.stringify({ ...formData, people, quantities }),
       });
-      if (res.ok) setIsSubmitted(true);
-    } catch (err) {
-      console.error(err);
+
+      if (response.ok) {
+        setIsSubmitted(true);
+        setTimeout(() => setIsSubmitted(false), 5000);
+      } else {
+        console.error("Errore server");
+      }
+    } catch (error) {
+      console.error("Errore invio:", error);
     }
   };
 

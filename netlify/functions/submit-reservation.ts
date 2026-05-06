@@ -1,34 +1,34 @@
 import { db } from "../../db";
 import { reservations } from "../../db/schema";
 
-export default async (req: Request) => {
-  if (req.method !== 'POST') {
-    return new Response('Method Not Allowed', { status: 405 });
+export const handler = async (event: any) => {
+  if (event.httpMethod !== "POST") {
+    return { statusCode: 405, body: "Method Not Allowed" };
   }
 
   try {
-    const body = await req.json();
-    const { name, email, arrivalTime, freestyle, notes, people, quantities } = body;
+    const data = JSON.parse(event.body);
 
     await db.insert(reservations).values({
-      nome: name,
-      email: email,
-      orarioArrivo: arrivalTime,
-      partecipaFreestyle: freestyle,
-      note: notes,
-      numeroPersone: Number(people) || 1,
-      qtyAperitivo: quantities?.aperitivo || 0,
-      qtyHotDog: quantities?.hot_dog || 0,
-      qtyPiadina: quantities?.piadina || 0,
-      qtyPatatine: quantities?.patatine || 0,
-      qtyBibita: quantities?.bibita || 0,
-      qtyAcqua: quantities?.acqua || 0,
-      qtyMenuCena: quantities?.menu_cena || 0,
+      nome: data.name,
+      email: data.email,
+      numeroPersone: Number(data.people),
+      orarioArrivo: data.arrivalTime,
+      partecipaFreestyle: data.freestyle,
+      note: data.notes,
+      qtyAperitivo: data.quantities.aperitivo,
+      qtyHotDog: data.quantities.hot_dog,
+      qtyPiadina: data.quantities.piadina,
+      qtyPatatine: data.quantities.patatine,
+      qtyBibita: data.quantities.bibita,
+      qtyAcqua: data.quantities.acqua,
     });
 
-    return new Response(JSON.stringify({ success: true }), { status: 200 });
-  } catch (err) {
-    console.error(err);
-    return new Response('Internal Server Error', { status: 500 });
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ message: "Successo" }),
+    };
+  } catch (error: any) {
+    return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
   }
 };
