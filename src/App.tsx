@@ -88,11 +88,18 @@ export default function App() {
     return total;
   }, [quantities]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitted(true);
-    // Mock submission
-    setTimeout(() => setIsSubmitted(false), 5000);
+    try {
+      const res = await fetch('/.netlify/functions/submit-reservation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...formData, people, quantities })
+      });
+      if (res.ok) setIsSubmitted(true);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
